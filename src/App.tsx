@@ -102,12 +102,12 @@ export default function App() {
 
   // Design section: headphones next to the person
   const targetX = isMobile ? vw * -0.025 : (isTablet ? vw * -0.015 : (isBigScreen ? -14 : -14));
-  const targetY = isMobile ? vw * -0.43 : (isTablet ? vh * -0.34 : (isBigScreen ? -213 : -340));
+  const targetY = isMobile ? vw * -0.43 : (isTablet ? vw * -0.40 : (isBigScreen ? -213 : -340));
   const targetScale = isMobile ? 0.53 : (isTablet ? 0.65 : (isBigScreen ? 0.43 : 0.70));
 
   // Tech Specs section: headphones next to the phone
   const techSpecsX = isMobile ? 0 : (isTablet ? vw * -0.1 : (isBigScreen ? -250 : -250));
-  const techSpecsY = isMobile ? vw * -0.21 : (isTablet ? vh * -0.05 : (isBigScreen ? 50 : 50));
+  const techSpecsY = isMobile ? vw * -0.21 : (isTablet ? vw * -0.05 : (isBigScreen ? 50 : 50));
   const techSpecsScale = isMobile ? 1.05 : (isTablet ? 1 : (isBigScreen ? 1.1 : 1.1));
 
   // Hero: 0-0.3, transition to design: 0.3-0.5, hold on design: 0.5-0.65, trans to specs: 0.65-0.85, hold on specs: 0.85-1.0
