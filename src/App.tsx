@@ -69,8 +69,8 @@ export default function App() {
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
-      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
-      setIsBigScreen(window.innerWidth >= 1024);
+      setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1280);
+      setIsBigScreen(window.innerWidth >= 1280);
     };
     handleResize(); // Initial check
     window.addEventListener('resize', handleResize);
@@ -95,15 +95,20 @@ export default function App() {
     }
   };
 
-  // Responsive Locked in exact measurements
-  const targetX = isMobile ? -10 : (isTablet ? -14 : (isBigScreen ? -14 : -14));
-  const targetY = isMobile ? -180 : (isTablet ? -160 : (isBigScreen ? -213 : -340));
-  const targetScale = isMobile ? 0.55 : (isTablet ? 0.60 : (isBigScreen ? 0.43 : 0.70));
+  // Viewport-relative measurements so positions scale across all screen sizes
+  // Mobile uses vw for BOTH x and y since phone widths (360-430px) are more consistent than heights (667-932px)
+  const vw = typeof window !== 'undefined' ? window.innerWidth : 1024;
+  const vh = typeof window !== 'undefined' ? window.innerHeight : 768;
 
-  // Responsive Tech Specs positioning
-  const techSpecsX = isMobile ? 0 : (isTablet ? -200 : (isBigScreen ? -250 : -250)); // Center on mobile, left on larger
-  const techSpecsY = isMobile ? -80 : (isTablet ? 50 : (isBigScreen ? 50 : 50));   // Higher on mobile to clear the phone below it
-  const techSpecsScale = isMobile ? 1.05 : (isTablet ? 1.1 : (isBigScreen ? 1.1 : 1.1));
+  // Design section: headphones next to the person
+  const targetX = isMobile ? vw * -0.025 : (isTablet ? vw * -0.015 : (isBigScreen ? -14 : -14));
+  const targetY = isMobile ? vw * -0.43 : (isTablet ? vh * -0.34 : (isBigScreen ? -213 : -340));
+  const targetScale = isMobile ? 0.53 : (isTablet ? 0.65 : (isBigScreen ? 0.43 : 0.70));
+
+  // Tech Specs section: headphones next to the phone
+  const techSpecsX = isMobile ? 0 : (isTablet ? vw * -0.1 : (isBigScreen ? -250 : -250));
+  const techSpecsY = isMobile ? vw * -0.21 : (isTablet ? vh * -0.05 : (isBigScreen ? 50 : 50));
+  const techSpecsScale = isMobile ? 1.05 : (isTablet ? 1 : (isBigScreen ? 1.1 : 1.1));
 
   // Hero: 0-0.3, transition to design: 0.3-0.5, hold on design: 0.5-0.65, trans to specs: 0.65-0.85, hold on specs: 0.85-1.0
   const imageX = useTransform(smoothProgress, [0, 0.3, 0.5, 0.65, 0.85, 1], [0, 0, targetX, targetX, techSpecsX, techSpecsX]);
@@ -266,9 +271,9 @@ export default function App() {
           {/* Background Image of the Phone */}
           <motion.div
             style={{ opacity: phoneOpacity }}
-            className={`absolute inset-0 flex items-center justify-center p-4 md:p-10 max-w-7xl mx-auto w-full pointer-events-none -z-10 ${isMobile ? 'ml-[0px] mt-[100px]' : 'ml-[500px]'}`}
+            className={`absolute inset-0 flex items-center justify-center p-4 md:p-10 max-w-7xl mx-auto w-full pointer-events-none -z-10 ${isMobile ? 'ml-[0px] mt-[100px]' : isTablet ? 'ml-[300px] mt-[50px]' : 'ml-[500px]'}`}
           >
-            <div className={`relative ${isMobile ? 'w-[200px] h-[400px]' : 'w-[300px] h-[600px]'} flex items-center justify-center`}>
+            <div className={`relative ${isMobile ? 'w-[200px] h-[400px]' : isTablet ? 'w-[250px] h-[500px]' : 'w-[300px] h-[600px]'} flex items-center justify-center`}>
               <img
                 src={iphoneImage}
                 alt="iPhone Connection Screen"
@@ -283,7 +288,7 @@ export default function App() {
             {/* Bubble: Connection Specs */}
             <motion.div
               style={{ opacity: specsTextOpacity }}
-              className={`absolute left-[10%] md:left-[55%] absolute top-[15%] md:top-[40%] bg-white/90 dark:bg-zinc-800/80 backdrop-blur border border-gray-100 dark:border-white/10 rounded-3xl p-4 md:p-5 w-11/12 md:w-auto md:max-w-[280px] shadow-lg pointer-events-auto transition-colors duration-500 \${isMobile ? 'left-1/2 -translate-x-1/2' : 'left-[60%]'}`}
+              className={`absolute bg-white/90 dark:bg-zinc-800/80 backdrop-blur border border-gray-100 dark:border-white/10 rounded-3xl p-5 shadow-lg pointer-events-auto transition-all duration-500 ${isMobile ? 'top-[35%] left-[5%] right-[5%] z-20' : isTablet ? 'top-[38%] left-[50%] max-w-[280px] z-20' : 'top-[40%] left-[55%] max-w-[280px]'}`}
             >
               <p className="text-xs md:text-sm font-medium text-gray-800 dark:text-gray-200 leading-snug transition-colors">
                 AirPods Max connect immediately to your iPhone or iPad. To pair, simply place AirPods Max near your device and tap Connect on your screen.
@@ -293,7 +298,7 @@ export default function App() {
             {/* Bubble: Battery Life */}
             <motion.div
               style={{ opacity: techBubble1Opacity }}
-              className={`absolute right-[10%] md:right-[80%] absolute bottom-[10%] md:bottom-[30%] bg-white/90 dark:bg-zinc-800/80 backdrop-blur border border-gray-100 dark:border-white/10 rounded-3xl p-4 md:p-5 w-[45%] md:w-auto md:max-w-[240px] shadow-lg pointer-events-auto transition-colors duration-500 \${isMobile ? 'left-[2%]' : 'left-[10%]'}`}
+              className={`absolute bg-white/90 dark:bg-zinc-800/80 backdrop-blur border border-gray-100 dark:border-white/10 rounded-3xl p-5 shadow-lg pointer-events-auto transition-all duration-500 ${isMobile ? 'bottom-[18%] left-[4%] w-[44%] z-20' : isTablet ? 'bottom-[28%] left-[8%] max-w-[240px] z-20' : 'bottom-[30%] left-[10%] max-w-[240px]'}`}
             >
               <h4 className="font-bold text-gray-900 dark:text-white mb-1 text-sm md:text-base transition-colors">20 Hours</h4>
               <p className="text-xs md:text-sm font-medium text-gray-600 dark:text-gray-400 leading-snug transition-colors">
@@ -304,7 +309,7 @@ export default function App() {
             {/* Bubble: Immersive Sound */}
             <motion.div
               style={{ opacity: techBubble2Opacity }}
-              className={`absolute right-[10%] md:right-[40%] absolute bottom-[5%] md:bottom-[15%] bg-white/90 dark:bg-zinc-800/80 backdrop-blur border border-gray-100 dark:border-white/10 rounded-3xl p-4 md:p-5 w-[45%] md:w-auto md:max-w-[250px] shadow-lg pointer-events-auto transition-colors duration-500 \${isMobile ? 'right-[2%]' : 'left-[45%]'}`}
+              className={`absolute bg-white/90 dark:bg-zinc-800/80 backdrop-blur border border-gray-100 dark:border-white/10 rounded-3xl p-5 shadow-lg pointer-events-auto transition-all duration-500 ${isMobile ? 'bottom-[4%] right-[4%] w-[44%] z-20' : isTablet ? 'bottom-[12%] left-[35%] max-w-[250px] z-20' : 'bottom-[15%] left-[45%] max-w-[250px]'}`}
             >
               <h4 className="font-bold text-gray-900 dark:text-white mb-1 text-sm md:text-base transition-colors">Immersive Sound</h4>
               <p className="text-xs md:text-sm font-medium text-gray-600 dark:text-gray-400 leading-snug transition-colors">
@@ -315,20 +320,20 @@ export default function App() {
             {/* Hardware Callouts (Lines pointing to the headphones on the left) */}
             <motion.div
               style={{ opacity: calloutOpacity }}
-              className={`absolute top-[25%] pointer-events-none ${isMobile ? 'left-[15%]' : 'left-[20%]'}`}
+              className="absolute top-[25%] pointer-events-none left-[15%] md:left-[20%]"
             >
               {/* Digital Crown Callout */}
               <div className="relative mb-12 md:mb-16">
-                <div className={`absolute right-[-2.5 rem] top-3 \${isMobile ? 'w-4' : 'w-10'} border-b-2 border-gray-400 dark:border-gray-500`}></div>
-                <div className={`bg-white/80 dark:bg-zinc-800/80 backdrop-blur border border-gray-200 dark:border-white/10 rounded-full font-bold text-gray-700 dark:text-gray-300 shadow-sm transition-colors duration-500 \${isMobile ? 'px-2 py-1 text-[10px] ml-[-2rem]' : 'px-3 py-1.5 text-xs ml-[-4rem]'}`}>
+                <div className="absolute right-[-2.5rem] top-3 w-4 md:w-10 border-b-2 border-gray-400 dark:border-gray-500"></div>
+                <div className="bg-white/80 dark:bg-zinc-800/80 backdrop-blur border border-gray-200 dark:border-white/10 rounded-full font-bold text-gray-700 dark:text-gray-300 shadow-sm transition-colors duration-500 px-2 md:px-3 py-1 md:py-1.5 text-[10px] md:text-xs ml-[-2rem] md:ml-[-4rem]">
                   Digital Crown
                 </div>
               </div>
 
               {/* Noise Control Callout */}
               <div className="relative">
-                <div className={`absolute right-[-4.5rem] top-3 \${isMobile ? 'w-8' : 'w-16'} border-b-2 border-gray-400 dark:border-gray-500`}></div>
-                <div className={`bg-white/80 dark:bg-zinc-800/80 backdrop-blur border border-gray-200 dark:border-white/10 rounded-full font-bold text-gray-700 dark:text-gray-300 shadow-sm transition-colors duration-500 \${isMobile ? 'px-2 py-1 text-[10px] ml-[-0.5rem]' : 'px-3 py-1.5 text-xs ml-[-2rem]'}`}>
+                <div className="absolute right-[-4.5rem] top-3 w-8 md:w-16 border-b-2 border-gray-400 dark:border-gray-500"></div>
+                <div className="bg-white/80 dark:bg-zinc-800/80 backdrop-blur border border-gray-200 dark:border-white/10 rounded-full font-bold text-gray-700 dark:text-gray-300 shadow-sm transition-colors duration-500 px-2 md:px-3 py-1 md:py-1.5 text-[10px] md:text-xs ml-[-0.5rem] md:ml-[-2rem]">
                   Noise Control
                 </div>
               </div>
